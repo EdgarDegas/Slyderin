@@ -66,7 +66,7 @@ init(slider: Slidable = DefaultSlider(), options: [Option] = [])
 
 - `tintColor` changes the color of the filled track. Inherited from the superview by default.
 - `directionalLayoutMargins` determines the slider's margins from its touch-responsive area. Defaults to 20px each side.
-- `semanticContentAttribute` determines whether the slider should flip when the interface layout direction is right-to-left. Defaults to `unspecifed`, which means it flips.
+- `semanticContentAttribute` determines whether the slider should flip when the interface layout direction is right-to-left. Defaults to `unspecifed`, which means it flips. Changes to this value won't apply until the next time the `Slyder` is added to superview.
 - `overrideUserInterfaceStyle` determines the blur effect is light or dark, if you have not specify a light or dark one.
 
 

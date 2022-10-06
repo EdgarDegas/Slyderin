@@ -23,6 +23,16 @@ open class Slyder: UIView {
         ThumblessSlider()
     }
     
+    open override var semanticContentAttribute: UISemanticContentAttribute {
+        get {
+            super.semanticContentAttribute
+        }
+        set {
+            super.semanticContentAttribute = newValue
+            slider.semanticContentAttribute = newValue
+        }
+    }
+    
     public init(slider: Slidable = DefaultSlider(), options: [Option] = []) {
         self.options = options.asOptions
         self.slider = slider

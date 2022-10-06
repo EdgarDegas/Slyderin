@@ -111,8 +111,29 @@ open class ThumblessSlider: UIView, Slidable {
         updateCornerRadius(getCornerRadius())
     }
     
+    open override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        guard superview != nil else {
+            return
+        }
+        resetVariableAndFixedConstraint()
+    }
+    
+    open override var semanticContentAttribute: UISemanticContentAttribute {
+        get {
+            super.semanticContentAttribute
+        }
+        set {
+            super.semanticContentAttribute = newValue
+            visualEffectView.semanticContentAttribute = newValue
+            visualEffectView.contentView.semanticContentAttribute = newValue
+            fillingView.semanticContentAttribute = newValue
+        }
+    }
+    
     private weak var fillingView: UIView!
-    private weak var variableConstraint: NSLayoutConstraint!
+    private weak var variableConstraint: NSLayoutConstraint?
+    private weak var fixedConstraint: NSLayoutConstraint?
     private weak var visualEffectView: UIVisualEffectView!
     
     public var fillingLength: CGFloat = 0 {
@@ -190,7 +211,7 @@ private extension ThumblessSlider {
     }
     
     func fitFillingLength(_ length: CGFloat) {
-        variableConstraint.constant = length
+        variableConstraint?.constant = length
     }
 }
 
@@ -250,38 +271,47 @@ private extension ThumblessSlider {
                 .isActive = true
             fillingView.bottomAnchor.constraint(equalTo: visualEffectView.contentView.bottomAnchor)
                 .isActive = true
-            variableConstraint = fillingView.widthAnchor.constraint(equalToConstant: 0)
-            variableConstraint.isActive = true
-
         case .yAxis:
             fillingView.leadingAnchor.constraint(equalTo: visualEffectView.contentView.leadingAnchor)
                 .isActive = true
             fillingView.trailingAnchor.constraint(equalTo: visualEffectView.contentView.trailingAnchor)
                 .isActive = true
-            variableConstraint = fillingView.heightAnchor.constraint(equalToConstant: 0)
-            variableConstraint.isActive = true
         }
+    }
+    
+    func resetVariableAndFixedConstraint() {
+        let variableConstraint: NSLayoutConstraint = {
+            switch direction.axis {
+            case .xAxis:
+                return fillingView.widthAnchor.constraint(equalToConstant: 0)
+            case .yAxis:
+                return fillingView.heightAnchor.constraint(equalToConstant: 0)
+            }
+        }()
         
-        switch direction {
-        case .leadingToTrailing:
-            fillingView.leadingAnchor.constraint(equalTo: visualEffectView.contentView.leadingAnchor)
-                .isActive = true
-        case .trailingToLeading:
-            fillingView.trailingAnchor.constraint(equalTo: visualEffectView.contentView.trailingAnchor)
-                .isActive = true
-        case .leftToRight:
-            fillingView.leftAnchor.constraint(equalTo: visualEffectView.contentView.leftAnchor)
-                .isActive = true
-        case .rightToLeft:
-            fillingView.rightAnchor.constraint(equalTo: visualEffectView.contentView.rightAnchor)
-                .isActive = true
-        case .topToBottom:
-            fillingView.topAnchor.constraint(equalTo: visualEffectView.contentView.topAnchor)
-                .isActive = true
-        case .bottomToTop:
-            fillingView.bottomAnchor.constraint(equalTo: visualEffectView.contentView.bottomAnchor)
-                .isActive = true
-        }
+        self.variableConstraint?.isActive = false
+        variableConstraint.isActive = true
+        self.variableConstraint = variableConstraint
+        
+        let fixedConstraint: NSLayoutConstraint = {
+            switch direction {
+            case .leadingToTrailing:
+                return fillingView.leadingAnchor.constraint(equalTo: visualEffectView.contentView.leadingAnchor)
+            case .trailingToLeading:
+                return fillingView.trailingAnchor.constraint(equalTo: visualEffectView.contentView.trailingAnchor)
+            case .leftToRight:
+                return fillingView.leftAnchor.constraint(equalTo: visualEffectView.contentView.leftAnchor)
+            case .rightToLeft:
+                return fillingView.rightAnchor.constraint(equalTo: visualEffectView.contentView.rightAnchor)
+            case .topToBottom:
+                return fillingView.topAnchor.constraint(equalTo: visualEffectView.contentView.topAnchor)
+            case .bottomToTop:
+                return fillingView.bottomAnchor.constraint(equalTo: visualEffectView.contentView.bottomAnchor)
+            }
+        }()
+        self.fixedConstraint?.isActive = false
+        fixedConstraint.isActive = true
+        self.fixedConstraint = fixedConstraint
     }
 }
 
