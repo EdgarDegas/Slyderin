@@ -62,7 +62,10 @@ open class Slyder: UIView {
     open var viewModel = ViewModel() {
         didSet {
             fit(viewModel)
-            valueChangeHandler?(viewModel.value)
+            let value = viewModel.value
+            if value != oldValue.value {
+                valueChangeHandler?(value)
+            }
         }
     }
     
