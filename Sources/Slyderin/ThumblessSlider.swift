@@ -32,7 +32,7 @@ open class ThumblessSlider: UIView, Slidable {
     }
     
     open class var defaultScaleRatio: ScaleRatio {
-        ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 2)
+        ScaleRatio(ratioOnAxis: 1, ratioAgainstAxis: 1)
     }
     
     open class var defaultDirection: Direction {
