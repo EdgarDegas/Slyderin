@@ -8,9 +8,9 @@ https://user-images.githubusercontent.com/12840982/194141815-8c48bb74-e792-4d92-
 
 ## How to Use
 
-Include it with Swift Package Manager.
+Use Swift Package Manager to add it to your project. On how to use Swift Package Manager, read this: https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app
 
-Add it to your view:
+`import Slyderin` into your source file, and add a `Slyder` object to your view:
 
 ```Swift
 import Slyderin
@@ -27,9 +27,31 @@ class ViewController: UIViewController {
 }
 ```
 
-The size of the `Slyder` is **not intrinsic**. And it includes a default **20px margin** on each side of the slider to increase the touch area, which cause the slider to be insetted. You can change it by changing its `directionalLayoutMargins`.
+### About Layout
 
-Use `valueChangeHandler` or call `onValueChange(_:)` to receive value changes:
+**The size of the `Slyder` is not intrinsic**, meaning it won't have a size of its own. You have to prevent its size or position from being ambiguous. For example, if you set a bottom constraint for it, you then have to set a top constraint or a height constraint for it, too. 
+
+
+
+**A `Slyder` has a built-in padding of 20px on each side of the slider by default, to increase the touch area.** This causes the slider to be indented. For example, if you want a slider to fit in some view with a 20px padding on each side:
+
+```swift
+slider.fillSuperview(padding: 20)
+```
+
+You will find that the paddings become 40px due to the extra built-in 20px paddings. The built-in 20px padding is there for the touch area, the recommendation is to keep it and reduce the outer padding to 0px:
+
+```swift
+slider.fillSuperview(padding: 0)
+```
+
+However, if you do want to change the paddings, they are in its `directionalLayoutMargins`.
+
+
+
+### About Value Changes
+
+Set the slider's `valueChangeHandler` or call `onValueChange(_:)` to receive value changes:
 
 ```Swift
 Slyder()
@@ -39,16 +61,24 @@ Slyder()
     }
 ```
 
-`Slyder` supports 2 different modes of tracking, you can specify it when initializing: 
+
+
+### About Tracking Modes
+
+`Slyder` supports 2 different modes of tracking. Specify it when initializing: 
 
 ```Swift
-Slyder(options: [.trackingBehavior()])
+Slyder(options: [.trackingBehavior( /* .trackMovement or .trackTouch() */ )])
 ```
 
-- The default tracking behavior is `.trackMovement`, which means the slider value changes according to the finger movements distance on the slider's direction.
-- The other mode is `.trackTouch(respondsImmediately: Bool)`. In this mode, the thumb (the filled track) moves to where the finger is. If `respondsImmediately` is `true`, the value changes immediately when the user put the finger down onto the slider. Otherwise the value won't change until the user moves the finger.
+- The default tracking behavior is `.trackMovement`. In this mode, the slider cares about the finger's movements and distances, instead of its position. It's the same as Safari video player progress bar in iOS 16.
+- The other mode is `.trackTouch(respondsImmediately: Bool)`. In this mode, the thumb (the filled track) moves to where the finger is. 
+    - If `respondsImmediately` is `true`, the value changes immediately when the user put the finger onto the slider. Otherwise the value won't change until the user moves the finger.
 
 
+
+
+---
 
 ## Make Your Own Slyder
 
