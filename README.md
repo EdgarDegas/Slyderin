@@ -2,7 +2,7 @@
 
 An iOS-16-styled slider.
 
-Available on iOS 13 and later.
+Available on iOS 13 and later. Supports RTL.
 
 https://user-images.githubusercontent.com/12840982/194141815-8c48bb74-e792-4d92-b43f-919c4834b2d8.mov
 
@@ -63,6 +63,45 @@ Slyder()
 
 
 
+
+
+### Parameters of the default slider
+
+Slyderin uses `Slyderin.ThumblessSlider` by default. You can change its initializer's parameters to more-or-less do some customizations:
+
+```Swift
+Slyder(
+    slider: ThumblessSlider(
+        direction: .bottomToTop,
+        scaleRatio: ThumblessSlider.ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 1.15),
+        cornerRadius: .fixed(12),
+        visualEffect: UIBlurEffect(style: .systemMaterialDark)
+    )
+)
+```
+
+- `direction` determines how whether the slider is horizontal or vertical and which way the track is filled, e.g.,: 
+
+    - `leadingToTrailing`. The slider is horizontal and the track is filled from the leading side to the trailing side when the user slides in leading-to-trailing direction. This is the default direction.
+    - `bottomToTop`. The slider is vertical and the track is filled from bottom to top when the user slides upwards.
+
+- `scaleRatio`. The slider expands its size when responding to user inputs. This parameter specifies the expanding ratio. 
+
+    - If you set it to `ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 1.15)`, for a horizontal slider, its 1.05 times wider and 1.15 times higher. Defaults to (1, 1).
+
+    - > Versions <= 0.0.2 has a default value of `ScaleRatio(ratioOnAxis: 1, ratioAgainstAxis: 1)`.
+
+- `cornerRadius` provides 2 different modes of corner radius:
+
+    - `full`, the corner radius equals half the length against the `direction`'s axis. For a horizontal slider with a height of 20px, the corner radius is 10px.
+    - `fixed(CGFloat)`, a fixed corner radius.
+
+- `visualEffect` specifies the visual effect of the unfilled track.
+
+> There is a new animation parameter on the way.
+
+
+
 ### About Tracking Modes
 
 `Slyder` supports 2 different modes of tracking. Specify it when initializing: 
@@ -98,37 +137,6 @@ init(slider: Slidable = DefaultSlider(), options: [Option] = [])
 - `directionalLayoutMargins` determines the slider's margins from its touch-responsive area. Defaults to 20px each side.
 - `semanticContentAttribute` determines whether the slider should flip when the interface layout direction is right-to-left. Defaults to `unspecifed`, which means it flips. Changes to this value won't apply until the next time the `Slyder` is added to superview.
 - `overrideUserInterfaceStyle` determines the blur effect is light or dark, if you have not specify a light or dark one.
-
-
-
-### Parameters of the default slider
-
-Slyderin uses `Slyderin.ThumblessSlider` by default. You can change its initializer's parameters to more-or-less do some customizations:
-
-```Swift
-Slyder(
-    slider: ThumblessSlider(
-        direction: .bottomToTop,
-        scaleRatio: ThumblessSlider.ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 1.15),
-        cornerRadius: .fixed(12),
-        visualEffect: UIBlurEffect(style: .systemMaterialDark)
-    )
-)
-```
-
-- `direction` determines how whether the slider is horizontal or vertical and which way the track is filled, e.g.,: 
-    - `leadingToTrailing`. The slider is horizontal and the track is filled from the leading side to the trailing side when the user slides in leading-to-trailing direction. This is the default direction.
-    - `bottomToTop`. The slider is vertical and the track is filled from bottom to top when the user slides upwards.
-- `scaleRatio`. The slider expands its size when responding to user inputs. This parameter specifies the expanding ratio. 
-    - Defaults to 1.05 on the axis of the direction, and 2.0 against the axis. Which, for a horizontal slider, its width expands 1.05 times and its height becomes 2.0 times.
-- `cornerRadius` provides 2 different modes of corner radius:
-    - `full`, the corner radius equals half the length against the `direction`'s axis. For a horizontal slider with a height of 20px, the corner radius is 10px.
-    - `fixed(CGFloat)`, a fixed corner radius.
-- `visualEffect` specifies the visual effect of the unfilled track.
-
-
-
-There is an animation parameter on the way.
 
 
 
