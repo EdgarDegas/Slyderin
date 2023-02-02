@@ -33,13 +33,13 @@ class ViewController: UIViewController {
 
 
 
-**A `Slyder` has a built-in padding of 20px on each side of the slider by default, to increase the touch area.** This causes the slider to be indented. For example, if you want a slider to fit in some view with a 20px padding on each side:
+**A `Slyder` has a built-in padding of 20px on each side by default, to increase the touch area.** This causes the slider to be indented. For example, if you want a slider to fit in some view with a 20px padding on each side:
 
 ```swift
 slider.fillSuperview(padding: 20)
 ```
 
-You will find that the paddings become 40px due to the extra built-in 20px paddings. The built-in 20px padding is there for the touch area, the recommendation is to keep it and reduce the outer padding to 0px:
+Then you will find the paddings have become 40px, due to the extra built-in 20px paddings. The built-in 20px padding is there for the touch area. The recommendation is to keep it and reduce your outer padding to 0px:
 
 ```swift
 slider.fillSuperview(padding: 0)
@@ -80,7 +80,7 @@ Slyder(
 )
 ```
 
-- `direction` determines how whether the slider is horizontal or vertical and which way the track is filled, e.g.,: 
+- `direction` determines whether the slider is horizontal or vertical and how the track is filled, e.g.,: 
 
     - `leadingToTrailing`. The slider is horizontal and the track is filled from the leading side to the trailing side when the user slides in leading-to-trailing direction. This is the default direction.
     - `bottomToTop`. The slider is vertical and the track is filled from bottom to top when the user slides upwards.
@@ -89,7 +89,7 @@ Slyder(
 
     - If you set it to `ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 1.15)`, for a horizontal slider, its 1.05 times wider and 1.15 times higher. Defaults to (1, 1).
 
-    - > Versions <= 0.0.2 has a default value of `ScaleRatio(ratioOnAxis: 1, ratioAgainstAxis: 1)`.
+    - > Versions <= 0.0.2 has a default scale ratio of `ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 2)`.
 
 - `cornerRadius` provides 2 different modes of corner radius:
 
