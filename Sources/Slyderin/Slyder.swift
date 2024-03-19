@@ -144,7 +144,7 @@ private extension Slyder {
         from valueWhenTouchBegan: Double
     ) -> ViewModel {
         let ratio = slider.scalar(of: translation, on: slider.direction) /
-            slider.projection(of: bounds.size, on: slider.direction.axis)
+            slider.projection(of: slider.bounds.size, on: slider.direction.axis)
         let valueChange = ratio * (viewModel.maximumValue - viewModel.minimumValue)
         let value = valueWhenTouchBegan + valueChange
         var viewModel = viewModel
@@ -153,8 +153,9 @@ private extension Slyder {
     }
     
     func updateViewModel(_ viewModel: ViewModel, to point: CGPoint) -> ViewModel {
+        let point = convert(point, to: slider)
         let pointValue = slider.value(of: point, on: slider.direction.axis)
-        var ratio = pointValue / slider.projection(of: bounds.size, on: slider.direction.axis)
+        var ratio = pointValue / slider.projection(of: slider.bounds.size, on: slider.direction.axis)
         if !slider.sliderValuePositivelyCorrelativeToCoordinateSystem {
             ratio = 1 - ratio
         }
