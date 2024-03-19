@@ -11,7 +11,7 @@ public extension Slider {
     enum Option {
         @available(*, deprecated, renamed: "tracks", message: "")
         case trackingBehavior(TrackingBehavior = .trackMovement)
-        case tracks(TrackingBehavior = .trackMovement)
+        case tracks(TrackingBehavior = .onTranslation)
     }
     
     struct Options {
@@ -22,7 +22,7 @@ public extension Slider {
         public var trackingBehavior: TrackingBehavior
         
         public init(
-            trackingBehavior: TrackingBehavior = .trackMovement
+            trackingBehavior: TrackingBehavior = .onTranslation
         ) {
             self.trackingBehavior = trackingBehavior
         }

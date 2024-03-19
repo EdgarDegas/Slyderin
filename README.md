@@ -103,7 +103,7 @@ Slider(
 `Slider` supports 2 different modes of tracking. Specify it when initializing: 
 
 ```Swift
-Slider(options: [.tracks( /* .onMovement, .onLocation or .onLocationOnceMoved */ )])
+Slider(options: [.tracks( /* .onTranslation, .onLocation or .onLocationOnceMoved */ )])
 ```
 
 - The default tracking behavior is `.onTranslation`. In this mode, the slider cares about the finger's movements and distances, instead of its position. It's the same as Safari video player progress bar in iOS 16.
