@@ -106,6 +106,11 @@ open class ThumblessSlider: UIView, Slidable {
         buildView()
     }
     
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        fitValueRatio(valueRatio, when: isInteracting)
+    }
+    
     open override func layoutSublayers(of layer: CALayer) {
         super.layoutSublayers(of: layer)
         updateCornerRadius(getCornerRadius())
@@ -136,9 +141,11 @@ open class ThumblessSlider: UIView, Slidable {
     private weak var fixedConstraint: NSLayoutConstraint?
     private weak var visualEffectView: UIVisualEffectView!
     
-    public var fillingLength: CGFloat = 0 {
+    private var isInteracting: Bool = false
+    
+    public var valueRatio: CGFloat = 0 {
         didSet {
-            fitFillingLength(fillingLength)
+            fitValueRatio(valueRatio, when: isInteracting)
         }
     }
     
@@ -163,11 +170,11 @@ open class ThumblessSlider: UIView, Slidable {
     
     public func fit(_ viewModel: Slyder.ViewModel) {
         let valueRatio = viewModel.value / (viewModel.maximumValue + viewModel.minimumValue)
-        let fillingLength = getFillingViewLength(byRatio: valueRatio, when: viewModel.interacting)
-        if self.fillingLength != fillingLength {
-            self.fillingLength = fillingLength
+        if self.valueRatio != valueRatio {
+            self.valueRatio = valueRatio
         }
         
+        isInteracting = viewModel.interacting
         let shouldScale = viewModel.interacting
         if visualEffectViewConstraints.scaled != shouldScale {
             visualEffectViewConstraints.scaled = shouldScale
@@ -210,8 +217,14 @@ private extension ThumblessSlider {
         }
     }
     
-    func fitFillingLength(_ length: CGFloat) {
-        variableConstraint?.constant = length
+    func fitValueRatio(_ valueRatio: CGFloat, when isInteracting: Bool) {
+        let fillingLength = getFillingViewLength(
+            byRatio: valueRatio,
+            when: isInteracting
+        )
+        if variableConstraint?.constant != fillingLength {
+            variableConstraint?.constant = fillingLength
+        }
     }
 }
 
