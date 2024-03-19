@@ -9,7 +9,9 @@ import Foundation
 
 public extension Slider {
     enum Option {
+        @available(*, deprecated, renamed: "tracks", message: "")
         case trackingBehavior(TrackingBehavior = .trackMovement)
+        case tracks(TrackingBehavior = .trackMovement)
     }
     
     struct Options {
@@ -27,10 +29,17 @@ public extension Slider {
     }
     
     enum TrackingBehavior {
-        /// The thumb of the slider is attached to the user's finger.
+        @available(*, deprecated, renamed: "onLocationOnceMoved", message: "Use onMovingLocation if respondsImmediately is false, otherwise use onLocation.")
         case trackTouch(respondsImmediately: Bool)
-        /// The thumb of the slider moves the same distance on the same direction with the user's finger.
+        @available(*, deprecated, renamed: "onMovement", message: "")
         case trackMovement
+        
+        /// The thumb of the slider is always attached to the user's finger.
+        case onLocation
+        /// The thumb of the slider follows the finger once it starts moving.
+        case onLocationOnceMoved
+        /// The thumb of the slider moves the same distance on the same direction with the user's finger.
+        case onTranslation
     }
 }
 
@@ -39,7 +48,7 @@ extension Array where Element == Slider.Option {
         var options = Slider.Options()
         for option in self {
             switch option {
-            case .trackingBehavior(let behavior):
+            case .trackingBehavior(let behavior), .tracks(let behavior):
                 options.trackingBehavior = behavior
             }
         }

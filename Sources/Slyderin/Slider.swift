@@ -99,7 +99,7 @@ open class Slider: UIView {
         }
         let location = touch.location(in: self)
         switch options.trackingBehavior {
-        case .trackMovement:
+        case .trackMovement, .onTranslation:
             let translation = CGVector(
                 dx: location.x - touchPointWhenBagan.x,
                 dy: location.y - touchPointWhenBagan.y
@@ -107,7 +107,7 @@ open class Slider: UIView {
             viewModel = updateViewModel(
                 viewModel, by: translation, from: valueWhenTouchBegan
             )
-        case .trackTouch:
+        case .trackTouch, .onLocationOnceMoved, .onLocation:
             viewModel = updateViewModel(viewModel, to: location)
         }
     }
@@ -132,8 +132,10 @@ open class Slider: UIView {
 private extension Slider {
     func handleTouchDown(on point: CGPoint) {
         switch options.trackingBehavior {
-        case .trackMovement:
+        case .trackMovement, .onTranslation, .onLocationOnceMoved:
             break
+        case .onLocation:
+            viewModel = updateViewModel(viewModel, to: point)
         case .trackTouch(let respondsImmediately):
             guard respondsImmediately else {
                 return
