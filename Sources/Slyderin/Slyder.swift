@@ -42,6 +42,7 @@ open class Slyder: UIView {
     }
     
     private var valueWhenTouchBegan: Double?
+    private var touchPointWhenBagan: CGPoint?
     
     public override init(frame: CGRect) {
         self.slider = Self.DefaultSlider()
@@ -74,22 +75,51 @@ open class Slyder: UIView {
         guard let touch = touches.first else {
             return
         }
+        let location = touch.location(in: self)
         viewModel.interacting = true
-        handleTouchDown(on: touch.location(in: self))
+        valueWhenTouchBegan = viewModel.value
+        touchPointWhenBagan = location
+        handleTouchDown(on: location)
+    }
+    
+    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        guard let touch = touches.first else {
+            return
+        }
+        guard
+            let valueWhenTouchBegan,
+            let touchPointWhenBagan
+        else {
+            return
+        }
+        let location = touch.location(in: self)
+        switch options.trackingBehavior {
+        case .trackMovement:
+            let translation = CGVector(
+                dx: location.x - touchPointWhenBagan.x,
+                dy: location.y - touchPointWhenBagan.y
+            )
+            viewModel = updateViewModel(
+                viewModel, by: translation, from: valueWhenTouchBegan
+            )
+        case .trackTouch:
+            viewModel = updateViewModel(viewModel, to: location)
+        }
     }
     
     open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        if valueWhenTouchBegan == nil {
-            viewModel.interacting = false
-        }
+        viewModel.interacting = false
+        valueWhenTouchBegan = nil
+        touchPointWhenBagan = nil
     }
     
     open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesCancelled(touches, with: event)
-        if valueWhenTouchBegan == nil {
-            viewModel.interacting = false
-        }
+        viewModel.interacting = false
+        valueWhenTouchBegan = nil
+        touchPointWhenBagan = nil
     }
 }
 
@@ -114,7 +144,7 @@ private extension Slyder {
         from valueWhenTouchBegan: Double
     ) -> ViewModel {
         let ratio = slider.scalar(of: translation, on: slider.direction) /
-            slider.projection(of: bounds.size, on: slider.direction.axis)
+            slider.projection(of: slider.bounds.size, on: slider.direction.axis)
         let valueChange = ratio * (viewModel.maximumValue - viewModel.minimumValue)
         let value = valueWhenTouchBegan + valueChange
         var viewModel = viewModel
@@ -123,8 +153,9 @@ private extension Slyder {
     }
     
     func updateViewModel(_ viewModel: ViewModel, to point: CGPoint) -> ViewModel {
+        let point = convert(point, to: slider)
         let pointValue = slider.value(of: point, on: slider.direction.axis)
-        var ratio = pointValue / slider.projection(of: bounds.size, on: slider.direction.axis)
+        var ratio = pointValue / slider.projection(of: slider.bounds.size, on: slider.direction.axis)
         if !slider.sliderValuePositivelyCorrelativeToCoordinateSystem {
             ratio = 1 - ratio
         }
@@ -146,37 +177,6 @@ private extension Slyder {
 }
 
 
-
-// MARK: pan recognizer
-private extension Slyder {
-    @objc func panRecognized(_ recognizer: UIPanGestureRecognizer) {
-        switch recognizer.state {
-        case .began:
-            valueWhenTouchBegan = viewModel.value
-        case .ended, .cancelled, .failed:
-            viewModel.interacting = false
-            valueWhenTouchBegan = nil
-        case .changed:
-            switch options.trackingBehavior {
-            case .trackMovement:
-                guard let valueWhenTouchBegan = valueWhenTouchBegan else {
-                    return
-                }
-                let translation = recognizer.translation(in: self).toVector
-                viewModel = updateViewModel(viewModel, by: translation, from: valueWhenTouchBegan)
-            case .trackTouch:
-                let location = recognizer.location(in: self)
-                viewModel = updateViewModel(viewModel, to: location)
-            }
-        case .possible:
-            break
-        @unknown default:
-            break
-        }
-    }
-}
-
-
 // MARK: build view
 private extension Slyder {
     func fit(_ viewModel: ViewModel) {
@@ -190,12 +190,6 @@ private extension Slyder {
         
         isMultipleTouchEnabled = false  // don't support multiple touch
         self.addSubview(slider)
-        
-        let panRecognizer = UIPanGestureRecognizer(
-            target: self,
-            action: #selector(panRecognized)
-        )
-        addGestureRecognizer(panRecognizer)
         
         slider.tintColor = tintColor
         slider.translatesAutoresizingMaskIntoConstraints = false
