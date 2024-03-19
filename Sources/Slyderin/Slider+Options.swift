@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Slyder {
+public extension Slider {
     enum Option {
         case trackingBehavior(TrackingBehavior = .trackMovement)
     }
@@ -34,9 +34,9 @@ public extension Slyder {
     }
 }
 
-extension Array where Element == Slyder.Option {
-    var asOptions: Slyder.Options {
-        var options = Slyder.Options()
+extension Array where Element == Slider.Option {
+    var asOptions: Slider.Options {
+        var options = Slider.Options()
         for option in self {
             switch option {
             case .trackingBehavior(let behavior):

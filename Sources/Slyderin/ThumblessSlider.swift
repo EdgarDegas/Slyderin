@@ -14,16 +14,32 @@ open class ThumblessSlider: UIView, Slidable {
     }
     
     public struct ScaleRatio {
-        public var ratioOnAxis: CGFloat
-        public var ratioAgainstAxis: CGFloat
+        @available(*, deprecated, renamed: "onAxis", message: "")
+        public var ratioOnAxis: CGFloat {
+            onAxis
+        }
+        @available(*, deprecated, renamed: "againstAxis", message: "")
+        public var ratioAgainstAxis: CGFloat {
+            againstAxis
+        }
+        @available(*, deprecated, renamed: "init(onAxis:againstAxis:)", message: "")
         public init(ratioOnAxis: CGFloat, ratioAgainstAxis: CGFloat) {
-            self.ratioOnAxis = ratioOnAxis
-            self.ratioAgainstAxis = ratioAgainstAxis
+            self.onAxis = ratioOnAxis
+            self.againstAxis = ratioAgainstAxis
+        }
+        
+        public var onAxis: CGFloat
+        public var againstAxis: CGFloat
+        public init(onAxis: CGFloat, againstAxis: CGFloat) {
+            self.onAxis = onAxis
+            self.againstAxis = againstAxis
         }
     }
     
     public let direction: Direction
+    
     public let scaleRatio: ScaleRatio
+    
     public let cornerRadius: CornerRadius
     open var visualEffect: UIVisualEffect? {
         didSet {
@@ -32,7 +48,7 @@ open class ThumblessSlider: UIView, Slidable {
     }
     
     open class var defaultScaleRatio: ScaleRatio {
-        ScaleRatio(ratioOnAxis: 1, ratioAgainstAxis: 1)
+        ScaleRatio(onAxis: 1, againstAxis: 1)
     }
     
     open class var defaultDirection: Direction {
@@ -91,10 +107,24 @@ open class ThumblessSlider: UIView, Slidable {
     ) {
         self.direction = direction
         self.scaleRatio = scaleRatio
-        self.cornerRadius = cornerRadius
-        self.visualEffect = visualEffect
+        self.cornerRadius = Self.defaultCornerRadius
+        self.visualEffect = Self.defaultVisualEffect
         super.init(frame: .zero)
         buildView()
+    }
+    
+    public convenience init(
+        direction: Direction = defaultDirection,
+        scaling: Scaling,
+        cornerRadius: CornerRadius = defaultCornerRadius,
+        visualEffect: UIVisualEffect = defaultVisualEffect
+    ) {
+        self.init(
+            direction: direction,
+            scaleRatio: scaling.scaleRatio,
+            cornerRadius: cornerRadius,
+            visualEffect: visualEffect
+        )
     }
     
     public required init?(coder: NSCoder) {
@@ -168,7 +198,7 @@ open class ThumblessSlider: UIView, Slidable {
         }
     }
     
-    public func fit(_ viewModel: Slyder.ViewModel) {
+    public func fit(_ viewModel: Slider.ViewModel) {
         let valueRatio = viewModel.value / (viewModel.maximumValue + viewModel.minimumValue)
         if self.valueRatio != valueRatio {
             self.valueRatio = valueRatio
