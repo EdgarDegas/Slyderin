@@ -1,6 +1,10 @@
 import UIKit
 
-open class Slyder: UIView {
+
+@available(*, deprecated, renamed: "Slider", message: "Use Slider or Slyderin.Slider instead.")
+public typealias Slyder = Slider
+
+open class Slider: UIView {
     open internal(set) var slider: Slidable
     open internal(set) var options: Options
     
@@ -95,7 +99,7 @@ open class Slyder: UIView {
         }
         let location = touch.location(in: self)
         switch options.trackingBehavior {
-        case .trackMovement:
+        case .trackMovement, .onTranslation:
             let translation = CGVector(
                 dx: location.x - touchPointWhenBagan.x,
                 dy: location.y - touchPointWhenBagan.y
@@ -103,7 +107,7 @@ open class Slyder: UIView {
             viewModel = updateViewModel(
                 viewModel, by: translation, from: valueWhenTouchBegan
             )
-        case .trackTouch:
+        case .trackTouch, .onLocationOnceMoved, .onLocation:
             viewModel = updateViewModel(viewModel, to: location)
         }
     }
@@ -125,11 +129,13 @@ open class Slyder: UIView {
 
 
 // MARK: tracking
-private extension Slyder {
+private extension Slider {
     func handleTouchDown(on point: CGPoint) {
         switch options.trackingBehavior {
-        case .trackMovement:
+        case .trackMovement, .onTranslation, .onLocationOnceMoved:
             break
+        case .onLocation:
+            viewModel = updateViewModel(viewModel, to: point)
         case .trackTouch(let respondsImmediately):
             guard respondsImmediately else {
                 return
@@ -178,7 +184,7 @@ private extension Slyder {
 
 
 // MARK: build view
-private extension Slyder {
+private extension Slider {
     func fit(_ viewModel: ViewModel) {
         slider.fit(viewModel)
     }

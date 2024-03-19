@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension Slyder {
+extension Slider {
     public struct ViewModel {
         public var maximumValue: Double = 1
         public var minimumValue: Double = 0

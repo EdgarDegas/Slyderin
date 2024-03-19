@@ -12,7 +12,7 @@ open class UIKitSlider: UISlider, Slidable {
         .leadingToTrailing
     }
     
-    open func fit(_ viewModel: Slyder.ViewModel) {
+    open func fit(_ viewModel: Slider.ViewModel) {
         // no scale transform
         maximumValue = Float(viewModel.maximumValue)
         minimumValue = Float(viewModel.minimumValue)

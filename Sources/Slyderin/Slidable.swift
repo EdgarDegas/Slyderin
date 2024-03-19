@@ -10,10 +10,10 @@ import UIKit
 public protocol Slidable: AnyObject where Self: UIView {
     var direction: Direction { get }
     
-    func fit(_ viewModel: Slyder.ViewModel)
+    func fit(_ viewModel: Slider.ViewModel)
 }
 
-extension Slidable {
+public extension Slidable {
     var layoutDirection: UIUserInterfaceLayoutDirection {
         UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
     }
@@ -125,7 +125,7 @@ public enum Direction {
         }
     }
     
-    enum Axis {
+    public enum Axis {
         case xAxis
         case yAxis
         

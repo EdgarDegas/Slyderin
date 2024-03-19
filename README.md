@@ -10,16 +10,16 @@ https://user-images.githubusercontent.com/12840982/194141815-8c48bb74-e792-4d92-
 
 Use Swift Package Manager to add it to your project. On how to use Swift Package Manager, read this: https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app
 
-`import Slyderin` into your source file, and add a `Slyder` object to your view:
+`import Slyderin` into your source file, and add a `Slider` object to your view:
 
 ```Swift
 import Slyderin
 class ViewController: UIViewController {   
-    private weak var slider: Slyder!
+    private weak var slider: Slider!
 	// ......
     func loadView() {
         super.loadView()
-        let slider = Slyder()
+        let slider = Slider()
         view.addSubview(slider)
         // your layout code......
     }
@@ -29,11 +29,11 @@ class ViewController: UIViewController {
 
 ### About Layout
 
-**The size of the `Slyder` is not intrinsic**, meaning it won't have a size of its own. You have to prevent its size or position from being ambiguous. For example, if you set a bottom constraint for it, you then have to set a top constraint or a height constraint for it, too. 
+**The size of the `Slider` is not intrinsic**, meaning it won't have a size of its own. You have to prevent its size or position from being ambiguous. For example, if you set a bottom constraint for it, you then have to set a top constraint or a height constraint for it, too. 
 
 
 
-**A `Slyder` has a built-in padding of 20px on each side by default, to increase the touch area.** This causes the slider to be indented. For example, if you want a slider to fit in some view with a 20px padding on each side:
+**A `Slider` has a built-in padding of 20px on each side by default, to increase the touch area.** This causes the slider to be indented. For example, if you want a slider to fit in some view with a 20px padding on each side:
 
 ```swift
 slider.fillSuperview(padding: 20)
@@ -54,7 +54,7 @@ However, if you do want to change the paddings, they are in its `directionalLayo
 Set the slider's `valueChangeHandler` or call `onValueChange(_:)` to receive value changes:
 
 ```Swift
-Slyder()
+Slider()
     .height(50)
     .onValueChange {
 		// new value $0 received
@@ -70,10 +70,10 @@ Slyder()
 Slyderin uses `Slyderin.ThumblessSlider` by default. You can change its initializer's parameters to more-or-less do some customizations:
 
 ```Swift
-Slyder(
+Slider(
     slider: ThumblessSlider(
         direction: .bottomToTop,
-        scaleRatio: ThumblessSlider.ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 1.15),
+        scaling: .both(onAxis: 1.05, againstAxis: 1.15),
         cornerRadius: .fixed(12),
         visualEffect: UIBlurEffect(style: .systemMaterialDark)
     )
@@ -85,11 +85,7 @@ Slyder(
     - `leadingToTrailing`. The slider is horizontal and the track is filled from the leading side to the trailing side when the user slides in leading-to-trailing direction. This is the default direction.
     - `bottomToTop`. The slider is vertical and the track is filled from bottom to top when the user slides upwards.
 
-- `scaleRatio`. The slider expands its size when responding to user inputs. This parameter specifies the expanding ratio. 
-
-    - If you set it to `ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 1.15)`, for a horizontal slider, its 1.05 times wider and 1.15 times higher. Defaults to (1, 1).
-
-    - > Versions <= 0.0.2 has a default scale ratio of `ScaleRatio(ratioOnAxis: 1.05, ratioAgainstAxis: 2)`.
+- `scaling`. The slider expands its size when responding to user inputs. This parameter specifies the expanding ratio. If you set it to `.both(onAxis: 1.05, againstAxis: 1.15)`, for a horizontal slider, its becomes 1.05 times wider and 1.15 times taller. Defaults to (1, 1).
 
 - `cornerRadius` provides 2 different modes of corner radius:
 
@@ -104,24 +100,21 @@ Slyder(
 
 ### About Tracking Modes
 
-`Slyder` supports 2 different modes of tracking. Specify it when initializing: 
+`Slider` supports 2 different modes of tracking. Specify it when initializing: 
 
 ```Swift
-Slyder(options: [.trackingBehavior( /* .trackMovement or .trackTouch() */ )])
+Slider(options: [.tracks( /* .onTranslation, .onLocation or .onLocationOnceMoved */ )])
 ```
 
-- The default tracking behavior is `.trackMovement`. In this mode, the slider cares about the finger's movements and distances, instead of its position. It's the same as Safari video player progress bar in iOS 16.
-- The other mode is `.trackTouch(respondsImmediately: Bool)`. In this mode, the thumb (the filled track) moves to where the finger is. 
-    - If `respondsImmediately` is `true`, the value changes immediately when the user put the finger onto the slider. Otherwise the value won't change until the user moves the finger.
-
-
+- The default tracking behavior is `.onTranslation`. In this mode, the slider cares about the finger's movements and distances, instead of its position. It's the same as Safari video player progress bar in iOS 16.
+- The other modes (`.onLocation` / `.onLocationOnceMoved`), the thumb (the filled track) moves to where the finger is. Specifically, under `.onLocationOnceMoved` mode, the slider won't start tracking until the finger moves.
 
 
 ---
 
-## Make Your Own Slyder
+## Make Your Own Slider
 
-You can specify a slider when initializing `Slyder`, as long as it is `Slidable`:
+You can specify a slider when initializing `Slider`, as long as it is `Slidable`:
 
 ```Swift
 init(slider: Slidable = DefaultSlider(), options: [Option] = [])
@@ -131,11 +124,11 @@ init(slider: Slidable = DefaultSlider(), options: [Option] = [])
 
 ### UIKit values
 
-`Slyder` respects some of the standard UIKit parameters:
+`Slider` respects some of the standard UIKit parameters:
 
 - `tintColor` changes the color of the filled track. Inherited from the superview by default.
 - `directionalLayoutMargins` determines the slider's margins from its touch-responsive area. Defaults to 20px each side.
-- `semanticContentAttribute` determines whether the slider should flip when the interface layout direction is right-to-left. Defaults to `unspecifed`, which means it flips. Changes to this value won't apply until the next time the `Slyder` is added to superview.
+- `semanticContentAttribute` determines whether the slider should flip when the interface layout direction is right-to-left. Defaults to `unspecifed`, which means it flips. Changes to this value won't apply until the next time the `Slider` is added to superview.
 - `overrideUserInterfaceStyle` determines the blur effect is light or dark, if you have not specify a light or dark one.
 
 
@@ -145,7 +138,7 @@ init(slider: Slidable = DefaultSlider(), options: [Option] = [])
 There is also a built-in `UISlider` subclass: `Slyderin.UIKitSlider`, which, unfortunately, supports only the leading-to-trailing direction:
 
 ```Swift
-Slyder(slider: UIKitSlider())
+Slider(slider: UIKitSlider())
 ```
 
 https://user-images.githubusercontent.com/12840982/194141894-fc9b7596-9be8-4247-bc0c-d422760a7591.mov
@@ -157,10 +150,10 @@ You can implement your own `Slidable`:
 ```Swift
 public protocol Slidable: AnyObject where Self: UIView {
     var direction: Direction { get }
-    func fit(_ viewModel: Slyder.ViewModel)
+    func fit(_ viewModel: Slider.ViewModel)
 }
 
-extension Slyder {
+extension Slider {
     public struct ViewModel {
         public var maximumValue: Double = 1
         public var minimumValue: Double = 0
